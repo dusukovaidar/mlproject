@@ -1,19 +1,8 @@
 FROM python:3.8-slim-buster
-
 WORKDIR /app
+COPY . /app
 
-# First copy only requirements.txt for better caching
-COPY requirements.txt .
+RUN apt update -y && apt install awscli -y
 
-# Install system dependencies and clean up in one RUN command
-RUN apt-get update && \
-    apt-get install -y awscli && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application
-COPY . .
-
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 unzip -y && pip install -r requirements.txt
 CMD ["python3", "app.py"]
